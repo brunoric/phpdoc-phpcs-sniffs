@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ruleset name="PHPDoc">
+ <description>PHPDoc coding standard.</description>
+</ruleset>
