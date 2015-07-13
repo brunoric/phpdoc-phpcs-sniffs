@@ -268,29 +268,6 @@ class PHPDoc_Sniffs_Commenting_InlineCommentSniff implements PHP_CodeSniffer_Sni
             $phpcsFile->addError($error, $topComment, 'NotCapital');
         }
 
-        // Only check the end of comment character if the start of the comment
-        // is a letter, indicating that the comment is just standard text.
-        if (preg_match('/\P{L}/u', $commentText[0]) === 0) {
-            $commentCloser   = $commentText[(strlen($commentText) - 1)];
-            $acceptedClosers = array(
-                                'full-stops'        => '.',
-                                'exclamation marks' => '!',
-                                'or question marks' => '?',
-                               );
-
-            if (in_array($commentCloser, $acceptedClosers) === false) {
-                $error = 'Inline comments must end in %s';
-                $ender = '';
-                foreach ($acceptedClosers as $closerName => $symbol) {
-                    $ender .= ' '.$closerName.',';
-                }
-
-                $ender = trim($ender, ' ,');
-                $data  = array($ender);
-                $phpcsFile->addError($error, $stackPtr, 'InvalidEndChar', $data);
-            }
-        }
-
         // Finally, the line below the last comment cannot be empty if this inline
         // comment is on a line by itself.
         if ($tokens[$previousContent]['line'] < $tokens[$stackPtr]['line']) {

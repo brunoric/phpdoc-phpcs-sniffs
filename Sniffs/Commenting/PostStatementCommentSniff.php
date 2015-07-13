@@ -93,12 +93,6 @@ class PHPDoc_Sniffs_Commenting_PostStatementCommentSniff implements PHP_CodeSnif
             }
         }
 
-        $error = 'Comments may not appear after statements';
-        $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'Found');
-        if ($fix === true) {
-            $phpcsFile->fixer->addNewlineBefore($stackPtr);
-        }
-
     }//end process()
 
 
