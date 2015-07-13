@@ -197,29 +197,33 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
             $content      = $tokens[$commentLines[1]]['content'];
             $commentText  = ltrim($content);
             $leadingSpace = (strlen($content) - strlen($commentText));
-            if ($leadingSpace !== $starColumn) {
-                $expected = $starColumn.' space';
-                if ($starColumn !== 1) {
-                    $expected .= 's';
-                }
+	    //Ignore * for ignore alignment of this commetn
+	    $firstChar = substr($content, 0, $starColumn - 1);
+	    if(!strpos($firstChar, '*')) {
+		if ($leadingSpace !== $starColumn) {
+		    $expected = $starColumn.' space';
+		    if ($starColumn !== 1) {
+			$expected .= 's';
+		    }
 
-                $data = array(
-                         $expected,
-                         $leadingSpace,
-                        );
+		    $data = array(
+			     $expected,
+			     $leadingSpace,
+			    );
 
-                $error = 'First line of comment not aligned correctly; expected %s but found %s';
-                $fix   = $phpcsFile->addFixableError($error, $commentLines[1], 'FirstLineIndent', $data);
-                if ($fix === true) {
-                    $newContent = str_repeat(' ', $starColumn).ltrim($content);
-                    $phpcsFile->fixer->replaceToken($commentLines[1], $newContent);
-                }
-            }
+		    $error = 'First line of comment not aligned correctly; expected %s but found %s';
+		    $fix   = $phpcsFile->addFixableError($error, $commentLines[1], 'FirstLineIndent', $data);
+		    if ($fix === true) {
+			$newContent = str_repeat(' ', $starColumn).ltrim($content);
+			$phpcsFile->fixer->replaceToken($commentLines[1], $newContent);
+		    }
+		}
 
-            if (preg_match('/\p{Lu}|\P{L}/u', $commentText[0]) === 0) {
-                $error = 'Block comments must start with a capital letter';
-                $phpcsFile->addError($error, $commentLines[1], 'NoCapital');
-            }
+		if (preg_match('/\p{Lu}|\P{L}/u', $commentText[0]) === 0) {
+		    $error = 'Block comments must start with a capital letter';
+		    $phpcsFile->addError($error, $commentLines[1], 'NoCapital');
+		}
+	    }
         }//end if
 
         // Check that each line of the comment is indented past the star.
@@ -229,6 +233,11 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
             if ($line === $commentLines[(count($commentLines) - 1)] || $line === $commentLines[0]) {
                 continue;
             }
+	    //Ignore * for ignore alignment of this commetn
+	    $firstChar = substr($tokens[$line]['content'], 0, $starColumn - 1);
+	    if(strpos($firstChar, '*')) {
+		continue;
+	    }
 
             // First comment line was handled above.
             if ($line === $commentLines[1]) {
@@ -270,22 +279,26 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
             $content      = $tokens[$commentLines[$lastIndex]]['content'];
             $commentText  = ltrim($content);
             $leadingSpace = (strlen($content) - strlen($commentText));
-            if ($leadingSpace !== ($tokens[$stackPtr]['column'] - 1)) {
-                $expected = ($tokens[$stackPtr]['column'] - 1);
-                if ($expected === 1) {
-                    $expected .= ' space';
-                } else {
-                    $expected .= ' spaces';
-                }
+	    //Ignore * for ignore alignment of this commetn
+	    $firstChar = substr($content, 0, $starColumn - 1);
+	    if(!strpos($firstChar, '*')) {
+		if ($leadingSpace !== ($tokens[$stackPtr]['column'] - 1)) {
+		    $expected = ($tokens[$stackPtr]['column'] - 1);
+		    if ($expected === 1) {
+			$expected .= ' space';
+		    } else {
+			$expected .= ' spaces';
+		    }
 
-                $data = array(
-                         $expected,
-                         $leadingSpace,
-                        );
+		    $data = array(
+			     $expected,
+			     $leadingSpace,
+			    );
 
-                $error = 'Last line of comment aligned incorrectly; expected %s but found %s';
-                $phpcsFile->addError($error, $commentLines[$lastIndex], 'LastLineIndent', $data);
-            }
+		    $error = 'Last line of comment aligned incorrectly; expected %s but found %s';
+		    $phpcsFile->addError($error, $commentLines[$lastIndex], 'LastLineIndent', $data);
+		}
+	    }
         }//end if
 
         // Check that the lines before and after this comment are blank.
@@ -309,6 +322,10 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
         if ($contentAfter !== false && ($tokens[$contentAfter]['line'] - $tokens[$commentCloser]['line']) < 2) {
             $error = 'Empty line required after block comment';
             $phpcsFile->addError($error, $commentCloser, 'NoEmptyLineAfter');
+	    $fix   = $phpcsFile->addFixableError($error, $commentCloser, 'NoEmptyLineAfter');
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($commentCloser, $tokens[$commentCloser]['content'] . "\n\n");
+            }
         }
 
     }//end process()
