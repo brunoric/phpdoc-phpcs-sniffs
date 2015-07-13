@@ -328,7 +328,6 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
         $contentAfter  = $phpcsFile->findNext(T_WHITESPACE, ($commentCloser + 1), null, true);
         if ($contentAfter !== false && ($tokens[$contentAfter]['line'] - $tokens[$commentCloser]['line']) < 2) {
             $error = 'Empty line required after block comment';
-            $phpcsFile->addError($error, $commentCloser, 'NoEmptyLineAfter');
 	    $fix   = $phpcsFile->addFixableError($error, $commentCloser, 'NoEmptyLineAfter');
             if ($fix === true) {
                 $phpcsFile->fixer->replaceToken($commentCloser, $tokens[$commentCloser]['content'] . "\n");

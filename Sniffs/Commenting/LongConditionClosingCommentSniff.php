@@ -164,21 +164,6 @@ class PHPDoc_Sniffs_Commenting_LongConditionClosingCommentSniff implements PHP_C
         $comment  = $phpcsFile->findNext(array(T_COMMENT), $stackPtr, null, false);
 
         if (($comment === false) || ($tokens[$comment]['line'] !== $endBrace['line'])) {
-            if ($lineDifference >= $this->lineLimit) {
-                $error = 'End comment for long condition not found; expected "%s"';
-                $data  = array($expected);
-                $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'Missing', $data);
-
-                if ($fix === true) {
-                    $next = $phpcsFile->findNext(T_WHITESPACE, ($stackPtr + 1), null, true);
-                    if ($next !== false && $tokens[$next]['line'] === $tokens[$stackPtr]['line']) {
-                        $expected .= $phpcsFile->eolChar;
-                    }
-
-                    $phpcsFile->fixer->addContent($stackPtr, $expected);
-                }
-            }
-
             return;
         }
 

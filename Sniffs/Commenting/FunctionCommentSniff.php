@@ -372,23 +372,26 @@ class PHPDoc_Sniffs_Commenting_FunctionCommentSniff extends PEAR_Sniffs_Commenti
                     }
 
                     if ($suggestedTypeHint !== '' && isset($realParams[$pos]) === true) {
+			$getType = substr($tokens[$tag + 2]['content'],0,strlen($suggestedTypeHint));
                         $typeHint = $realParams[$pos]['type_hint'];
-                        if ($typeHint === '') {
-                            $error = 'Type hint "%s" missing for %s';
-                            $data  = array(
-                                      $suggestedTypeHint,
-                                      $param['var'],
-                                     );
-                            $phpcsFile->addError($error, $stackPtr, 'TypeHintMissing', $data);
-                        } else if ($typeHint !== substr($suggestedTypeHint, (strlen($typeHint) * -1))) {
-                            $error = 'Expected type hint "%s"; found "%s" for %s';
-                            $data  = array(
-                                      $suggestedTypeHint,
-                                      $typeHint,
-                                      $param['var'],
-                                     );
-                            $phpcsFile->addError($error, $stackPtr, 'IncorrectTypeHint', $data);
-                        }
+			if($getType !== $suggestedTypeHint){
+				if ($typeHint === '') {
+				    $error = 'Type hint "%s" missing for %s';
+				    $data  = array(
+					      $suggestedTypeHint,
+					      $param['var'],
+					     );
+				    $phpcsFile->addError($error, $stackPtr, 'TypeHintMissing', $data);
+				} else if ($typeHint !== substr($suggestedTypeHint, (strlen($typeHint) * -1))) {
+				    $error = 'Expected type hint "%s"; found "%s" for %s';
+				    $data  = array(
+					      $suggestedTypeHint,
+					      $typeHint,
+					      $param['var'],
+					     );
+				    $phpcsFile->addError($error, $stackPtr, 'IncorrectTypeHint', $data);
+				}
+			}
                     } else if ($suggestedTypeHint === '' && isset($realParams[$pos]) === true) {
                         $typeHint = $realParams[$pos]['type_hint'];
                         if ($typeHint !== '') {
