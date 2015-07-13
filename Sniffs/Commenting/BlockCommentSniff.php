@@ -274,7 +274,14 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
         $content   = trim($tokens[$commentLines[$lastIndex]]['content']);
         if ($content !== '*/' && $content !== '**/') {
             $error = 'Comment closer must be on a new line';
-            $phpcsFile->addError($error, $commentLines[$lastIndex]);
+            $fix   = $phpcsFile->addFixableError($error, $commentLines[$lastIndex]);
+            if ($fix === true) {
+                if($content !== '*/') {
+                    $phpcsFile->fixer->replaceToken($commentLines[$lastIndex], str_replace('*/','',$content) . "\n" . '*/' );
+                } elseif($content !== '**/') {
+                    $phpcsFile->fixer->replaceToken($commentLines[$lastIndex], str_replace('**/','',$content) . "\n" . '**/' );
+                }
+            }
         } else {
             $content      = $tokens[$commentLines[$lastIndex]]['content'];
             $commentText  = ltrim($content);
@@ -324,7 +331,7 @@ class PHPDoc_Sniffs_Commenting_BlockCommentSniff implements PHP_CodeSniffer_Snif
             $phpcsFile->addError($error, $commentCloser, 'NoEmptyLineAfter');
 	    $fix   = $phpcsFile->addFixableError($error, $commentCloser, 'NoEmptyLineAfter');
             if ($fix === true) {
-                $phpcsFile->fixer->replaceToken($commentCloser, $tokens[$commentCloser]['content'] . "\n\n");
+                $phpcsFile->fixer->replaceToken($commentCloser, $tokens[$commentCloser]['content'] . "\n");
             }
         }
 
