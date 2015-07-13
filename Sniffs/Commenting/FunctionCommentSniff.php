@@ -72,9 +72,11 @@ class PHPDoc_Sniffs_Commenting_FunctionCommentSniff extends PEAR_Sniffs_Commenti
 
         if ($return !== null) {
             $content = $tokens[($return + 2)]['content'];
-            if (empty($content) === true || $tokens[($return + 2)]['code'] !== T_DOC_COMMENT_STRING) {
-                $error = 'Return type missing for @return tag in function comment';
-                $phpcsFile->addError($error, $return, 'MissingReturnType');
+            if (empty($content) === true ) {
+                if(trim($tokens[($return + 2)]['content']) !== 'void' || $tokens[($return + 2)]['code'] !== T_DOC_COMMENT_STRING) {
+		    $error = 'Return type missing for @return tag in function comment';
+		    $phpcsFile->addError($error, $return, 'MissingReturnType');
+                }
             } else {
                 // Check return type (can be multiple, separated by '|').
                 $typeNames      = explode('|', $content);
