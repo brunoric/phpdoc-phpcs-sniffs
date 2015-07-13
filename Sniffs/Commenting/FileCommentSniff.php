@@ -80,17 +80,14 @@ class PHPDoc_Sniffs_Commenting_FileCommentSniff implements PHP_CodeSniffer_Sniff
 
         $commentEnd = $tokens[$commentStart]['comment_closer'];
 
-        // No blank line between the open tag and the file comment.
-        if ($tokens[$commentStart]['line'] > ($tokens[$stackPtr]['line'] + 1)) {
-            $error = 'There must be no blank lines before the file comment';
-            $phpcsFile->addError($error, $stackPtr, 'SpacingAfterOpen');
-        }
-
         // Exactly one blank line after the file comment.
         $next = $phpcsFile->findNext(T_WHITESPACE, ($commentEnd + 1), null, true);
         if ($tokens[$next]['line'] !== ($tokens[$commentEnd]['line'] + 2)) {
             $error = 'There must be exactly one blank line after the file comment';
-            $phpcsFile->addError($error, $commentEnd, 'SpacingAfterComment');
+            $fix   = $phpcsFile->addFixableError($error, $commentEnd, 'SpacingAfterComment');
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($commentEnd, $tokens[$commentEnd]['content'] . "\n");
+            }
         }
 
         // Required tags in correct order.
