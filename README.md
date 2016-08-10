@@ -1,14 +1,20 @@
 # phpdoc-phpcs-sniffs
 Based on Squiz version without some their stuff and new feature for PHPCBF.
 
-## Installing
-After the install of PHPCS/PHPCBF place on /usr/share/php/PHP/CodeSniffer/ and load the content of this repo in a folder
-called PHPDoc.
+## Installation
 
-## How to use
-I use two bash alias for fast use:
+Just run:
 
+```bash
+git archive --remote=git@github.com:brunoric/phpdoc-phpcs-sniffs.git HEAD bin/installer | tar -xO | bash
 ```
-alias phpdoc='phpcs -d memory_limit=512M --ignore=*cmb*,index.php,*.js,WP_*,CPT_* --standard=PHPDoc'
-alias phpdoccbf='phpcbf -d memory_limit=512M --ignore=*cmb*,index.php,*.js,WP_*,CPT_* --standard=PHPDoc'
+It will install the standard and its dependencies.
+
+## Usage
+
+You just need to pass the PHPDoc as parameter and the path of the file
+to be inspected:
+
+```bash
+phpcs --standard=PHPDoc /path/file.php
 ```
