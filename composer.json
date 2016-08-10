@@ -1,0 +1,22 @@
+{
+    "name": "brunoric/phpdoc-phpcs-sniffs",
+    "description": "A set of PHP_CodeSniffer rules and sniffs to check PHPDoc rules.",
+    "type": "library",
+    "keywords": [
+        "phpcs",
+        "standards",
+        "phpdoc"
+    ],
+    "homepage": "https://github.com/brunoric/phpdoc-phpcs-sniffs",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bruno Ricardo Siqueira",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "squizlabs/php_codesniffer": "2.*"
+    }
+}
